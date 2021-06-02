@@ -1,0 +1,5 @@
+db.sqlite3
+.idea/*
+.docker/pgdata
+*.pyc
+__pycache__

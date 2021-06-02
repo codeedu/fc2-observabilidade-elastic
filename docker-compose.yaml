@@ -1,0 +1,72 @@
+version: "3"
+
+services:  
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.13.0
+    container_name: elasticsearch
+    environment:
+      - node.name=elasticsearch
+      - cluster.name=es-docker-cluster
+      - cluster.initial_master_nodes=elasticsearch
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - http.cors.enabled=true
+      - http.cors.allow-origin="*"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - ./elasticsearch_data:/usr/share/elasticsearch/data
+    ports:
+      - 9200:9200
+    networks: 
+        - observability
+   
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.13.0
+    container_name: kibana
+    ports:
+      - 5601:5601
+    environment:
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+      ELASTICSEARCH_HOSTS: '["http://elasticsearch:9200"]'
+    networks: 
+        - observability
+
+  metricbeat:
+    image: docker.elastic.co/beats/metricbeat:7.13.0
+    container_name: metricbeat
+    user: root
+    volumes:      
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./beats/metric/metricbeat.yml:/usr/share/metricbeat/metricbeat.yml
+    restart: on-failure
+    networks: 
+      - observability
+
+  heartbeat:
+    image: docker.elastic.co/beats/heartbeat:7.13.0
+    container_name: heartbeat
+    volumes:      
+    - ./beats/heartbeat/heartbeat.yml:/usr/share/heartbeat/heartbeat.yml
+    environment: 
+    - setup.kibana.host=kibana:5601
+    networks: 
+      - observability
+
+  apm:
+    image: docker.elastic.co/apm/apm-server-oss:7.13.0
+    container_name: apm
+    volumes:      
+    - ./apm/apm-server.yml:/usr/share/apm-server/apm-server.yml
+    ports:
+      - "8200:8200"
+    restart: on-failure
+    networks: 
+      - observability
+
+networks:
+  observability:
+    driver: bridge    

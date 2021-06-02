@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Full Cycle</title>
+    <script src="https://unpkg.com/@elastic/apm-rum@5.4.0/dist/bundles/elastic-apm-rum.umd.min.js" crossorigin></script>
+    <script>
+        elasticApm.init({
+        serviceName: "codeprogress-rum",
+        pageLoadTraceId: "{{ apm.trace_id }}",
+        pageLoadSpanId: "{{ apm.span_id }}",
+        pageLoadSampled: {{ apm.is_sampled_js }},
+        serverUrl: "http://localhost:8200",
+    })
+    </script>
+</head>
+<body>
+    <h1>Exemplo Full Cycle de Questões</h1>
+    {% if latest_question_list %}
+        <ul>
+        {% for question in latest_question_list %}
+            <li>{{ question.question_text }}</li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No polls are available.</p>
+    {% endif %}
+</body>
+</html>

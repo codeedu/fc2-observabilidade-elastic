@@ -1,0 +1,46 @@
+version: '3'   
+
+services:
+    db:
+      image: postgres
+      container_name: postgres
+      tty: true
+      environment:
+        - POSTGRES_DB=commerce_admin
+        - POSTGRES_USER=postgres
+        - POSTGRES_PASSWORD=root
+      volumes:
+        - .docker/pgdata:/var/lib/postgresql/data
+      ports:
+        - "5432:5432"
+      networks: 
+        - observability
+
+    pgadmin:
+      image: dpage/pgadmin4
+      container_name: pgadmin
+      tty: true
+      environment:
+        - PGADMIN_DEFAULT_EMAIL=admin@fullcycle.com.br
+        - PGADMIN_DEFAULT_PASSWORD=123456
+      ports:
+        - "9001:80"
+      networks: 
+        - observability
+    
+    app:
+      build: .
+      container_name: app
+      command: python manage.py runserver 0.0.0.0:8000
+      volumes:
+        - .:/code
+      ports:
+        - "8000:8000"
+      depends_on:
+        - db
+      networks: 
+        - observability
+
+networks:
+  observability:
+    driver: bridge        

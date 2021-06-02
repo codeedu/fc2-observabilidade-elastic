@@ -1,0 +1,6 @@
+.idea/*
+app/.idea/*
+app/.docker/pgdata
+app/*.pyc
+app/__pycache__
+elasticsearch_data/
