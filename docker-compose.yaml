@@ -8,11 +8,11 @@ services:
     environment:
       - node.name=elasticsearch
       - cluster.name=es-docker-cluster
-      - cluster.initial_master_nodes=elasticsearch
       - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
       - http.cors.enabled=true
       - http.cors.allow-origin="*"
+      - discovery.type=single-node
     ulimits:
       memlock:
         soft: -1
@@ -69,4 +69,4 @@ services:
 
 networks:
   observability:
-    driver: bridge    
+    external: true
