@@ -30,7 +30,7 @@ services:
     
     app:
       build: .
-      container_name: app
+      container_name: app_python
       command: python manage.py runserver 0.0.0.0:8000
       volumes:
         - .:/code
@@ -40,7 +40,15 @@ services:
         - db
       networks: 
         - observability
+    
+    nginx:
+      build: ../nginx
+      container_name: nginx
+      ports:
+        - "8280:80"
+      networks: 
+        - observability
 
 networks:
   observability:
-    driver: bridge        
+    external: true     

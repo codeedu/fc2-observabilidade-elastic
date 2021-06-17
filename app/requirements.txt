@@ -1,3 +1,5 @@
 Django==3.0.8
 gunicorn==20.0.4
 psycopg2-binary>=2.8
+JSON-log-formatter==0.3.1
+elastic-apm
